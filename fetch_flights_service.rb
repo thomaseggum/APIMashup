@@ -1,5 +1,6 @@
 require 'net/http'
 require 'json'
+require 'xmlsimple'
 
 class FetchFlightsService
   
@@ -19,6 +20,7 @@ class FetchFlightsService
 
   def fetchDataFromUrl(url)
     xml_data = Net::HTTP.get_response(URI.parse(url)).body.to_s
+    XmlSimple.xml_in(xml_data)
   end
 
 
