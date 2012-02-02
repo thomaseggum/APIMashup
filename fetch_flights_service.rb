@@ -1,5 +1,4 @@
 require 'net/http'
-require 'xmlsimple'
 require 'json'
 
 class FetchFlightsService
