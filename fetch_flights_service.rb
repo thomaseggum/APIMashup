@@ -7,7 +7,7 @@ class FetchFlightsService
   @@airline_names = nil
   
   def fetchXml
-    if  !@@airport_names || @@airline_names
+    if  !@@airport_names || !@@airline_names
       p "fetching airportnames and airline names"
       @@airport_names = fetchDataFromUrl("http://flydata.avinor.no/airportNames.asp")
       @@airline_names = fetchDataFromUrl("http://flydata.avinor.no/airlineNames.asp")
@@ -20,5 +20,6 @@ class FetchFlightsService
   def fetchDataFromUrl(url)
     xml_data = Net::HTTP.get_response(URI.parse(url)).body.to_s
   end
+
 
 end
