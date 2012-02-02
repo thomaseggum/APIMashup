@@ -5,8 +5,14 @@ configure :production do
   
 end
 
-get '/' do
+@@fetchFlightsService = FetchFlightsService.new
+
+get '/:iata/:direction' do
   fetchFlightsService = FetchFlightsService.new
-  fetchFlightsService.fetchXml
+  fetchFlightsService.fetchXml(params[:iata], params[:direction])
+end
+
+get '/airports' do
+    @@fetchFlightsService.fetch_airport_names.to_json
 end
 

@@ -7,17 +7,21 @@ class FetchFlightsService
   @@airport_names = nil
   @@airline_names = nil
   
-  def fetchXml
+  def fetch_airport_names
+    @@airport_names || fetchDataFromUrl("http://flydata.avinor.no/airportNames.asp")["airportName"].to_hash_values {|v| v["code"]}
+  end
+  
+  def fetchXml(iata, direction)
     if  !@@airport_names || !@@airline_names
       p "fetching airportnames and airline names"
       @@airport_names = fetchDataFromUrl("http://flydata.avinor.no/airportNames.asp")["airportName"].to_hash_values {|v| v["code"]}
       @@airline_names = fetchDataFromUrl("http://flydata.avinor.no/airlineNames.asp")["airlineName"].to_hash_values {|v| v["code"]}
     end
  
-    flights = fetchDataFromUrl("http://flydata.avinor.no/XmlFeed.asp?TimeFrom=1&TimeTo=7&airport=OSL&direction=D&lastUpdate=2009-03-10T15:03:00")["flights"][0]["flight"]
+    flights = fetchDataFromUrl("http://flydata.avinor.no/XmlFeed.asp?TimeFrom=2&TimeTo=4&airport=#{iata.upcase}&direction=#{direction}")["flights"][0]["flight"]
     flights_array = Array.new
     flights.each do | flight |
-      flight_object = {"city" => @@airport_names[flight["airport"][0]], "time" => Time.parse(flight["schedule_time"][0]).strftime("%H:%M")}
+      flight_object = {"city" => @@airport_names[flight["airport"][0]], "time" => Time.parse(flight["schedule_time"][0]+" UTC").localtime.strftime("%H:%M")}
       flights_array << flight_object
     end
     
@@ -30,6 +34,8 @@ class FetchFlightsService
   end
 
 end
+
+
 
 class Array
     def to_hash_values(&block)
