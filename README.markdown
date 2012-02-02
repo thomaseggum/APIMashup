@@ -1,1 +1,0 @@
-# Small back end application for doing some mashups of some API`s
