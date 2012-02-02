@@ -17,11 +17,15 @@ class FetchFlightsService
       @@airport_names = fetchDataFromUrl("http://flydata.avinor.no/airportNames.asp")["airportName"].to_hash_values {|v| v["code"]}
       @@airline_names = fetchDataFromUrl("http://flydata.avinor.no/airlineNames.asp")["airlineName"].to_hash_values {|v| v["code"]}
     end
+  
+    xml_api_url = iata == "RYG" ? "http://www.ryg.no/files/ryg.no/flytider/xmlfeed.aspx" : "http://flydata.avinor.no/XmlFeed.asp"
  
-    flights = fetchDataFromUrl("http://flydata.avinor.no/XmlFeed.asp?TimeFrom=2&TimeTo=4&airport=#{iata.upcase}&direction=#{direction}")["flights"][0]["flight"]
+    p "XML API = #{xml_api_url}"
+    flights = fetchDataFromUrl("#{xml_api_url}?TimeFrom=2&TimeTo=4&airport=#{iata.upcase}&direction=#{direction}")["flights"][0]["flight"]
     flights_array = Array.new
     flights.each do | flight |
-      flight_object = {"city" => @@airport_names[flight["airport"][0]], "time" => (Time.parse(flight["schedule_time"][0]+" UTC").gmtime + 3600).strftime("%H:%M")}
+      flight_object = {"city" => @@airport_names[flight["airport"][0]], 
+                      "time" => (Time.parse(flight["schedule_time"][0]+" UTC").gmtime + 3600).strftime("%H:%M")}
       flights_array << flight_object
     end
     
