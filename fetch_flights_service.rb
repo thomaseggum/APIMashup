@@ -21,7 +21,7 @@ class FetchFlightsService
     flights = fetchDataFromUrl("http://flydata.avinor.no/XmlFeed.asp?TimeFrom=2&TimeTo=4&airport=#{iata.upcase}&direction=#{direction}")["flights"][0]["flight"]
     flights_array = Array.new
     flights.each do | flight |
-      flight_object = {"city" => @@airport_names[flight["airport"][0]], "time" => Time.parse(flight["schedule_time"][0]+" UTC").localtime(Time.new.utc_offset).strftime("%H:%M")}
+      flight_object = {"city" => @@airport_names[flight["airport"][0]], "time" => Time.parse(flight["schedule_time"][0]+" UTC").gmttime.strftime("%H:%M")}
       flights_array << flight_object
     end
     
